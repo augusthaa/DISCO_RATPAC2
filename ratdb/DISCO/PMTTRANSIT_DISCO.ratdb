@@ -1,0 +1,18 @@
+{
+  name: "PMTTRANSIT",
+  index: "hamamatsu",
+  run_range : [0,0],
+  cable_delay: 0.0,
+  time: [],
+  time_prob: [],
+}
+
+{
+  name: "PMTTRANSIT",
+  index: "adit",
+  run_range : [0,0],
+  cable_delay: 0.0,
+  time: [],
+  time_prob: [],
+}
+

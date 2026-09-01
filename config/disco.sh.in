@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export DISCODATA=@DISCOSHARE@
+export PATH=@DISCOROOT@/bin:$PATH
+export LD_LIBRARY_PATH=@DISCOROOT@/lib:$LD_LIBRARY_PATH

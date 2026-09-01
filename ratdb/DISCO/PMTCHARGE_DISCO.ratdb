@@ -1,0 +1,19 @@
+{
+  name: "PMTCHARGE",
+  index: "hamamatsu",
+  run_range: [0,0],
+  
+  charge : [], 
+  
+  charge_prob: [],
+}
+
+{
+  name: "PMTCHARGE",
+  index: "adit",
+  run_range: [0,0],
+  
+  charge : [], 
+  
+  charge_prob: [],
+}

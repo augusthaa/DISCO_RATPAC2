@@ -1,0 +1,45 @@
+
+{
+name: "PMT",
+index: "hamamatsu",
+run_range: [0,0],
+
+construction: "cylindrical",
+
+pmt_radius: 14.25,
+pmt_height: 78.0,
+photocathode_radius: 12.5,
+case_thickness: 1.0,
+glass_thickness: 2.0,
+ 
+case_material: "aluminum",
+glass_material: "hamamatsu_borosilicate_glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode",
+
+efficiency_correction: 1.0,
+noise_rate: 1000.0, // Hz
+}
+
+
+{
+name: "PMT",
+index: "adit",
+run_range: [0,0],
+
+construction: "cylindrical",
+
+pmt_radius: 12.7,
+pmt_height: 62.0,
+photocathode_radius: 11.0,
+case_thickness: 1.0,
+glass_thickness: 2.0,
+ 
+case_material: "aluminum",
+glass_material: "hamamatsu_borosilicate_glass",
+pmt_vacuum_material: "pmt_vacuum",
+photocathode_surface: "photocathode",
+
+efficiency_correction: 1.0,
+noise_rate: 1000.0, // Hz
+}

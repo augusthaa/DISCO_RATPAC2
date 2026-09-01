@@ -1,0 +1,8 @@
+bin/*
+*.root
+*.log
+*.o
+disco.sh
+install/*
+build/*
+Config.hh

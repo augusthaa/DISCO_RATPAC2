@@ -1,0 +1,22 @@
+{
+name : "MATERIAL",
+index : "polystyrene_scint",
+run_range : [0, 0],
+density : 1.06,
+nelements : 2,
+nmaterials : 0,
+elements : ["Carbon","Hydrogen"],
+elemprop : [0.5,0.5,],
+formula : "AROMATIC",
+}
+
+{
+name: "MATERIAL",
+index: "wbls_1pct",
+run_range: [0,0],
+density: 1.0,
+nelements: 0,
+nmaterials: 3,
+materials: ["lab", "ppo", "water"],
+matprop: [0.009977, 2.3e-05, 0.99]
+}
