@@ -19,9 +19,6 @@ public:
   virtual G4VPhysicalVolume *Construct(DBLinkPtr table);
   std::vector<G4double> trackerPosition;
 
-private:
-  virtual void SetSensitive(G4LogicalVolume *logi, DBLinkPtr table);
-
 protected:
   G4double fibDia, fibLen;
   G4double fScintPanelX, fScintPanelY, fScintPanelZ;

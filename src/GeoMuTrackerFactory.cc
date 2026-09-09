@@ -141,10 +141,4 @@ G4VPhysicalVolume *GeoMuTrackerFactory::Construct(DBLinkPtr table) {
   // return NULL;
 }
 
-/*
-void GeoMuTrackerFactory::SetSensitive(){
-
-}
-*/
-
 } // namespace RAT

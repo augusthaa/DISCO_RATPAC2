@@ -4,6 +4,8 @@ add_library( discoobj OBJECT
   GeoMuTrackerFactory.cc
   GeoTestCellFactory.cc
   GeoPMTHousingFactory.cc
+  GeoMuTrackerSDHit.cc
+  GeoMuTrackerSD.cc
 )
 
 target_include_directories( discoobj PUBLIC
