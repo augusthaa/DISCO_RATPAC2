@@ -16,7 +16,8 @@
 
 namespace RAT {
 
-GeoMuTrackerSD::GeoMuTrackerSD(G4String name) : G4VSensitiveDetector(name) {
+GeoMuTrackerSD::GeoMuTrackerSD(G4String name, G4int nSciBars, G4int nOneModule)
+    : G4VSensitiveDetector(name), fNSciBars(nSciBars), fNOneModule(nOneModule) {
   G4String HCname;
   collectionName.insert(HCname = "MuTrackerHits");
   HCID = -1;
@@ -40,8 +41,6 @@ void GeoMuTrackerSD::Initialize(G4HCofThisEvent *HCE) {
   // store pointer to hit collection
   _HCE = HCE;
 
-  fLastTrackID = fLastEventID = -1;
-
   debug << "GeoMuTrackerSD::Initialize end." << newline;
 }
 
@@ -64,8 +63,6 @@ G4bool GeoMuTrackerSD::ProcessHits(G4Step *aStep,
     return true;
   }
 
-  int eventID =
-      G4RunManager::GetRunManager()->GetCurrentRun()->GetNumberOfEvent();
   int trackID = aStep->GetTrack()->GetTrackID();
 
   G4VPhysicalVolume *thePhysical = touchable->GetVolume();
@@ -81,21 +78,28 @@ G4bool GeoMuTrackerSD::ProcessHits(G4Step *aStep,
     _hit_process_name = "UserLimit";
   }
   //_hit_panel_id = thePhysical->GetCopyNo();
-  _hit_panel_id = preStepPoint->GetPhysicalVolume()->GetCopyNo();
+  //_hit_panel_id = preStepPoint->GetPhysicalVolume()->GetCopyNo();
+
+  int barID = touchable->GetVolume(0)->GetCopyNo(); // scintPanel
+  int layerID =
+      touchable->GetVolume(1)
+          ->GetCopyNo(); // TrackerLayerMom's placement (rotation index)
+  int moduleID =
+      touchable->GetVolume(2)->GetCopyNo(); // muTrackerBlockLV placement
+
+  _hit_panel_id =
+      moduleID * (fNOneModule * fNSciBars) + layerID * fNSciBars + barID;
+  //_hit_panel_id = moduleID * 32 + layerID  * 8 + barID;
 
   GeoMuTrackerSDHit *trackerHit = new GeoMuTrackerSDHit();
 
-  if (fLastTrackID != trackID) {
-    trackerHit->SetTime(_hit_time);
-    trackerHit->SetPos(_hit_pos);
-    trackerHit->SetEdep(_hit_E);
-    trackerHit->SetPDG(_hit_pdg);
-    trackerHit->SetID(_hit_panel_id);
-    trackerHit->SetLogVName(_hit_volume);
-    trackerHit->SetHitProcessName(_hit_process_name);
-    fLastEventID = eventID;
-    fLastTrackID = trackID;
-  }
+  trackerHit->SetTime(_hit_time);
+  trackerHit->SetPos(_hit_pos);
+  trackerHit->SetEdep(_hit_E);
+  trackerHit->SetPDG(_hit_pdg);
+  trackerHit->SetID(_hit_panel_id);
+  trackerHit->SetLogVName(_hit_volume);
+  trackerHit->SetHitProcessName(_hit_process_name);
 
   _hitsCollection->insert(trackerHit);
 

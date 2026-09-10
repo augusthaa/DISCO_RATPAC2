@@ -23,6 +23,9 @@
 
 #include <fstream>
 
+#include "GeoMuTrackerSD.hh"
+#include <G4SDManager.hh>
+
 namespace RAT {
 
 G4VPhysicalVolume *GeoMuTrackerFactory::Construct(DBLinkPtr table) {
@@ -136,6 +139,14 @@ G4VPhysicalVolume *GeoMuTrackerFactory::Construct(DBLinkPtr table) {
   G4VPhysicalVolume *MuonTrackerPV =
       new G4PVPlacement(nullptr, trackerPos, muTrackerLogicVol, "MuonTrackerPV",
                         motherLog, false, 0, true);
+
+  if (enable_mu_tracker) {
+    G4SDManager *SDman = G4SDManager::GetSDMpointer();
+    GeoMuTrackerSD *muTrackerSD =
+        new GeoMuTrackerSD("/mydet/muTrackerSD", nSciBars, nOneModule);
+    SDman->AddNewDetector(muTrackerSD);
+    scintPanelLogicVol->SetSensitiveDetector(muTrackerSD);
+  }
 
   return MuonTrackerPV;
   // return NULL;

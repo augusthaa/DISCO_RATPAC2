@@ -12,7 +12,7 @@ namespace RAT {
 
 class GeoMuTrackerSD : public G4VSensitiveDetector {
 public:
-  GeoMuTrackerSD(G4String name);
+  GeoMuTrackerSD(G4String name, G4int nSciBars, G4int nOneModule);
   virtual ~GeoMuTrackerSD();
 
   virtual void Initialize(G4HCofThisEvent *HCE);
@@ -37,12 +37,11 @@ public:
   G4String _hit_process_name;
 
 private:
-  int fLastEventID;
-  int fLastTrackID;
-
   GeoMuTrackerSDHitsCollection *_hitsCollection;
   G4int HCID;
   G4HCofThisEvent *_HCE;
+  G4int fNSciBars;
+  G4int fNOneModule;
 };
 
 } // namespace RAT

@@ -41,6 +41,8 @@ GeoMuTrackerSDHit::GeoMuTrackerSDHit(const GeoMuTrackerSDHit &right)
   Edep = right.Edep;
   pLogV = right.pLogV;
   pdg = right.pdg;
+  proc = right.proc;
+  LVname = right.LVname;
 }
 
 const GeoMuTrackerSDHit &
@@ -52,6 +54,8 @@ GeoMuTrackerSDHit::operator=(const GeoMuTrackerSDHit &right) {
   Edep = right.Edep;
   pLogV = right.pLogV;
   pdg = right.pdg;
+  proc = right.proc;
+  LVname = right.LVname;
   return *this;
 }
 
