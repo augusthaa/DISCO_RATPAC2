@@ -6,6 +6,7 @@ add_library( discoobj OBJECT
   GeoPMTHousingFactory.cc
   GeoMuTrackerSDHit.cc
   GeoMuTrackerSD.cc
+  discoNtupleProc.cc
 )
 
 target_include_directories( discoobj PUBLIC

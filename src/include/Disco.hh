@@ -6,6 +6,7 @@
 #include <RAT/ProcAllocator.hh>
 #include <RAT/ProcBlockManager.hh>
 #include <RAT/Rat.hh>
+#include <discoNtupleProc.hh>
 
 namespace DISCO {
 class Disco : public RAT::Rat {

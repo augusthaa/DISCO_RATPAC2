@@ -1,0 +1,280 @@
+#ifndef __RATdiscoNtupleProc___
+#define __RATdiscoNtupleProc___
+
+#include <TTimeStamp.h>
+#include <TTree.h>
+#include <sys/types.h>
+
+#include <RAT/DS/Classifier.hh>
+#include <RAT/DS/FitResult.hh>
+#include <RAT/DS/Run.hh>
+#include <RAT/Processor.hh>
+#include <RAT/TransitTimeCalculator.hh>
+#include <functional>
+
+#include "Math/Types.h"
+
+class TFile;
+class TTree;
+
+namespace RAT {
+
+class discoNtupleProc : public Processor {
+public:
+  static int run_num;
+  discoNtupleProc();
+  void BeginOfRun(DS::Run *run) override;
+
+  enum mc_pe_type {
+    noise = 0,
+    cherenkov = 1,
+    scintillation = 2,
+    reemission = 3,
+    unknown = 4
+  };
+
+  // file - string, name of file to open for output, file will be erased
+  // updatefile - string, name of file to append to
+  // (do not use both file and update file)
+  // virtual void SetS(std::string param, std::string value);
+
+  // autosave - integer, update root file every N kilobytes
+  // savetree 0 - Do not save the event tree.  Must set *before* file or
+  // updatefile.
+  // virtual void SetI(std::string param, int value);
+
+  virtual Processor::Result DSEvent(DS::Root *ds);
+
+  virtual bool OpenFile(std::string theFilename);
+
+  virtual void SetI(std::string param, int value);
+  virtual void SetS(std::string param, std::string value);
+  // Utility function
+  static ULong64_t TTimeStamp_to_UnixTime(TTimeStamp ts) {
+    const ULong64_t stonano = 1000000000;
+    return static_cast<ULong64_t>(ts.GetSec()) * stonano +
+           static_cast<ULong64_t>(ts.GetNanoSec());
+  }
+  virtual void EndOfRun(DS::Run *run) override;
+
+  // Extensible functions
+  virtual void AssignAdditionalAddresses() {};
+  virtual void AssignAdditionalMetaAddresses() {};
+  virtual void FillEvent(DS::Root *, DS::EV *) {};
+  virtual void FillNoTriggerEvent(DS::Root *) {};
+  virtual void FillMeta() {};
+
+  // Exposed members for external tools
+  DS::Run *runBranch;
+  // Fill Functions
+  struct NtupleOptions {
+    bool tracking;
+    bool mcparticles;
+    bool pmthits;
+    bool digitizerwaveforms;
+    bool digitizerhits;
+    bool digitizerfits;
+    bool untriggered;
+    bool mchits;
+    bool nthits;
+    bool calib;
+    bool transittime;
+    bool mutrackerhits;
+    bool mtTrkAllHits;
+  };
+
+  NtupleOptions options;
+
+  std::vector<std::string> waveform_fitters;
+  std::map<std::string, std::vector<std::string>> waveform_fitter_FOMs;
+  std::vector<std::string> event_fitters;
+  std::map<std::string, std::vector<std::string>> event_fitter_FOMs;
+  std::vector<std::string> event_classifiers;
+  std::map<std::string, std::vector<std::string>> event_classifier_FOMs;
+
+  std::unique_ptr<RAT::TransitTimeCalculator> fTransitTimeCalculator;
+
+protected:
+  std::string defaultFilename;
+  TFile *outputFile;
+  TTree *outputTree;
+  TTree *metaTree;
+  TTree *waveformTree;
+  // Meta Branches
+  Int_t runId;
+  ULong64_t runType;
+  ULong64_t runTime;
+  int dsentries;
+  std::string macro;
+  std::vector<int> pmtType;
+  std::vector<int> pmtId;
+  std::vector<int> pmtChannel;
+  std::vector<bool> pmtIsOnline;
+  std::vector<double> pmtCableOffset;
+  std::vector<double> pmtChargeScale;
+  std::vector<double> pmtPulseWidthScale;
+  std::vector<double> pmtX;
+  std::vector<double> pmtY;
+  std::vector<double> pmtZ;
+  std::vector<double> pmtU;
+  std::vector<double> pmtV;
+  std::vector<double> pmtW;
+  std::vector<int> ntId;
+  std::vector<double> ntX;
+  std::vector<double> ntY;
+  std::vector<double> ntZ;
+  std::vector<double> ntU;
+  std::vector<double> ntV;
+  std::vector<double> ntW;
+  u_int32_t digitizerWindowSize;
+  Double_t digitizerSampleRate;
+  Double_t digitizerDynamicRange;
+  Double_t digitizerVoltageResolution;
+  // Calibration source information
+  // get from 1st event, and then mark done.
+  bool done_writing_calib;
+  Int_t calibId;
+  Int_t calibMode;
+  Double_t calibIntensity;
+  Double_t calibWavelength;
+  std::string calibName;
+  ULong64_t calibTime;
+  Double_t calibX, calibY, calibZ, calibU, calibV, calibW;
+  // Digitizer waveforms
+  int waveform_pmtid;
+  std::vector<Double_t> inWindowPulseTimes;
+  std::vector<Double_t> inWindowPulseCharges;
+  std::vector<UShort_t> waveform;
+  // Data Branches
+  Int_t mcpdg;
+  double mcx, mcy, mcz;
+  double mcu, mcv, mcw;
+  double mcke;
+  double mct;
+  std::vector<double> mcTransitTimes;
+  int evid;
+  int subev;
+  int nhits;
+  double totalcharge;
+  double triggerTime;
+  ULong64_t timestamp;
+  ULong64_t trigger_word;
+  ULong64_t event_cleaning_word;
+  double timeSinceLastTrigger_us;
+  // MC Summary Information
+  double scintEdep;
+  double scintEdepQuenched;
+  double scintPhotons;
+  double remPhotons;
+  double cherPhotons;
+  // MCPMT
+  int mcnhits;
+  int mcpecount;
+  std::vector<int> mcpmtid;
+  std::vector<int> mcpmtnpe;
+  std::vector<double> mcpmtcharge;
+  // MCNestedTube
+  int mcnNTs;
+  int mcnNThits;
+  std::vector<int> mcNTid;
+  std::vector<double> mcNThittime;
+  std::vector<double> mcNThitx;
+  std::vector<double> mcNThity;
+  std::vector<double> mcNThitz;
+  // MCPE
+  std::vector<int> mcpepmtid;
+  std::vector<double> mcpehittime;
+  std::vector<double> mcpefrontendtime;
+  std::vector<int> mcpeprocess;
+  std::vector<double> mcpewavelength;
+  std::vector<double> mcpex;
+  std::vector<double> mcpey;
+  std::vector<double> mcpez;
+  std::vector<double> mcpecharge;
+  // MCParticles
+  int mcpcount;
+  int mcid;
+  std::vector<Int_t> pdgcodes;
+  std::vector<double> mcKEnergies;
+  std::vector<double> mcPosx;
+  std::vector<double> mcPosy;
+  std::vector<double> mcPosz;
+  std::vector<double> mcDirx;
+  std::vector<double> mcDiry;
+  std::vector<double> mcDirz;
+  std::vector<double> mcTime;
+  // Reconstruted variables
+  std::map<std::string, double> fitvalues;
+  std::map<std::string, bool> fitvalids;
+  std::map<std::string, std::map<std::string, double>> fiteventFOMs;
+  std::map<std::string, std::map<std::string, double>> classifyeventFOMs;
+  // Store PMT Hit Positions
+  std::vector<int> hitPMTID;
+  std::vector<double> hitPMTTime;
+  std::vector<double> hitPMTCharge;
+  // Store PMT information from digitized waveform
+  int digitNhits;
+  std::vector<double> digitPeak;
+  std::vector<double> digitTime;
+  std::vector<double> digitCharge;
+  std::vector<double> digitTimeOverThreshold;
+  std::vector<double> digitVoltageOverThreshold;
+  std::vector<double> digitLocalTriggerTime;
+  std::vector<int> digitReconNPEs;
+  std::vector<int> digitNCrossings;
+  std::vector<int> digitPMTID;
+  // Hit cleaning information
+  int digitHitCleanedNhits;
+  std::vector<uint64_t> digitHitCleaningMask;
+  // Information from fit to the waveforms
+  std::map<std::string, std::vector<int>> wfmFitPmtID;
+  std::map<std::string, std::vector<double>> wfmFitTime;
+  std::map<std::string, std::vector<double>> wfmFitCharge;
+  std::map<std::string, std::map<std::string, std::vector<double>>> wfmFitFOM;
+  // Tracking
+  std::map<std::string, int> processCodeMap;
+  std::vector<int> processCodeIndex;
+  std::vector<std::string> processName;
+  std::map<std::string, int> volumeCodeMap;
+  std::vector<int> volumeCodeIndex;
+  std::vector<std::string> volumeName;
+
+  // Tracking
+  std::vector<int> trackPDG;
+  std::vector<std::vector<double>> trackPosX;
+  std::vector<std::vector<double>> trackPosY;
+  std::vector<std::vector<double>> trackPosZ;
+  std::vector<std::vector<double>> trackMomX;
+  std::vector<std::vector<double>> trackMomY;
+  std::vector<std::vector<double>> trackMomZ;
+  std::vector<std::vector<double>> trackKE;
+  std::vector<std::vector<double>> trackTime;
+  std::vector<std::vector<int>> trackProcess;
+  std::vector<std::vector<int>> trackVolume;
+
+  // muon tracker info
+  // all hit info
+  // std::vector<double> mtHitEdep;
+  // std::vector<int> mtHitDetID;
+  // std::vector<double> mtHitTime;
+  // std::vector<double> mtHitX;
+  // std::vector<double> mtHitY;
+  // std::vector<double> mtHitZ;
+
+  // hit info on each scintillator panel
+  std::vector<double> mtPanelEdep;
+  std::vector<int> mtPanelDetID;
+  std::vector<double> mtPanelX;
+  std::vector<double> mtPanelY;
+  std::vector<double> mtPanelZ;
+  std::vector<double> mtPanelTime;
+  int mt_mcpdg;
+  double mt_mcu;
+  double mt_mcv;
+  double mt_mcw;
+  double mt_mcke;
+};
+
+} // namespace RAT
+
+#endif

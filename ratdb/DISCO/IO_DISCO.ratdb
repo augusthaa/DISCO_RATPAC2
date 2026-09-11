@@ -1,0 +1,24 @@
+{
+name: "IO",
+index: "discoNtupleProc",
+run_range: [0, 0],
+default_output_filename: "output.ntuple.root",
+include_tracking: false,
+include_mcparticles: false,
+include_pmthits: true,
+include_nestedtubehits: false,
+include_digitizerhits: true,
+include_digitizerfits: true,
+include_digitizerwaveforms: false,
+include_untriggered_events: true,
+include_mchits: true,
+include_mctransittime: false,
+include_calib: false,
+include_mutrackerhits: true,
+waveform_fitters: [],
+event_fitters: [],
+event_classifiers: [],
+}
+
+
+

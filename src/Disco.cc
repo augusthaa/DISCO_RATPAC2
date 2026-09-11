@@ -22,6 +22,7 @@ Disco::Disco(RAT::AnyParse *p, int argc, char **argv) : Rat(p, argc, argv) {
   new RAT::GeoPMTHousingFactory();
 
   // Include a new type of processor
+  RAT::ProcBlockManager::AppendProcessor<RAT::discoNtupleProc>();
   // Add a unique component to the datastructure
 }
 } // namespace DISCO
