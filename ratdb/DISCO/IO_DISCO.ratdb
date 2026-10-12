@@ -15,9 +15,9 @@ include_mchits: true,
 include_mctransittime: false,
 include_calib: false,
 include_mutrackerhits: true,
-waveform_fitters: [],
-event_fitters: [],
-event_classifiers: [],
+waveform_fitters: ["none"],
+event_fitters: ["fittime"],
+event_classifiers: ["none"],
 }
 
 
